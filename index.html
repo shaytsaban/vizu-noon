@@ -68,22 +68,13 @@
             padding-bottom: 10px;
         }
 
-        .tableau-embed {
+        tableau-viz {
             width: 100%;
             height: 800px;
             margin: 20px 0;
-            border: none;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
             display: block;
-        }
-
-        .tableau-error {
-            color: #ff6b6b;
-            text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
         }
 
         .stats-grid {
@@ -144,17 +135,16 @@
         <section class="section" id="tableau">
             <h2>Sausage Dashboard 🌭📊</h2>
             <p>Feast your eyes on our featured visualization below - sausage stats galore! 👇</p>
-            <!-- Updated Tableau URL with explicit embed parameters -->
-            <iframe 
-                class="tableau-embed"
-                src="https://public.tableau.com/views/SausageNewLetsPray/Dashboard2?:language=en-US&:embed=y&:display_count=n&:origin=viz_share_link&:toolbar=yes&:tabs=no"
-                title="Sausage Analytics Dashboard"
-                allowfullscreen>
-            </iframe>
-            <div class="tableau-error" id="tableauError">
-                <p>Oops! The dashboard isn't loading 😢. This might be due to Tableau restrictions or a connection issue.</p>
-                <p>View it directly here: <a href="https://public.tableau.com/views/SausageNewLetsPray/Dashboard2?:language=en-US&:display_count=n&:origin=viz_share_link" target="_blank">Sausage Dashboard Link</a> 🌭</p>
-            </div>
+            <!-- Tableau Embedding API v3 -->
+            <script type="module" src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+            <tableau-viz 
+                id="tableauViz"
+                src="https://public.tableau.com/views/SausageNewLetsPray/Dashboard2"
+                toolbar="bottom"
+                hide-tabs
+                width="100%"
+                height="800">
+            </tableau-viz>
         </section>
 
         <section class="section" id="stats">
@@ -205,34 +195,6 @@
                 }, 500);
             });
         });
-
-        // Check Tableau iframe load status
-        const tableauIframe = document.querySelector('.tableau-embed');
-        const errorDiv = document.getElementById('tableauError');
-        let loadCheckInterval;
-
-        tableauIframe.addEventListener('load', () => {
-            clearInterval(loadCheckInterval);
-            // Check if iframe loaded successfully by inspecting content
-            setTimeout(() => {
-                try {
-                    if (!tableauIframe.contentWindow.document.body || tableauIframe.contentWindow.document.body.innerHTML === "") {
-                        errorDiv.style.display = 'block';
-                    } else {
-                        errorDiv.style.display = 'none';
-                    }
-                } catch (e) {
-                    errorDiv.style.display = 'block'; // CORS or refusal will trigger this
-                }
-            }, 2000); // Delay to allow Tableau to render
-        });
-
-        // Fallback if iframe doesn't load within 5 seconds
-        loadCheckInterval = setTimeout(() => {
-            if (tableauIframe.contentWindow.document.body.innerHTML === undefined) {
-                errorDiv.style.display = 'block';
-            }
-        }, 5000);
 
         // Define bounce animation
         const styleSheet = document.styleSheets[0];
